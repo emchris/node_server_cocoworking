@@ -99,7 +99,14 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client){
           //check exists email
           db.collection('user').find({'email' : email}).count(function(err, number) {
               if (number == 0){
-                  response.json('Email not exists');
+                  var responseJson = {
+                      '_id': "",
+                      'email' : "",
+                      'name': "",
+                      'message': 'Email not exists',
+                      'flag': null
+                  }
+                  response.json(responseJson);
                   console.log('Email not exists');
               }
               else {
@@ -108,11 +115,25 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client){
                       var hashed_password = checkHashPassword(userPassword, salt).passwordHash; // Hash paswword with salt
                       var encrypted_password = user.password;
                       if(hashed_password == encrypted_password){
-                          response.json('Login success');
+                          var responseJson = {
+                              '_id': user._id,
+                              'email' : user.email,
+                              'name': user.name,
+                              'message': 'Login success',
+                              'flag': 1
+                          }
+                          response.json(responseJson);
                           console.log('Login success');
                       }
                       else {
-                          response.json('Wrong password');
+                          var responseJson = {
+                              '_id': "",
+                              'email' : "",
+                              'name': "",
+                              'message': 'Wrong password',
+                              'flag': null
+                          }
+                          response.json(responseJson);
                           console.log('Wrong password');
                       }
                   })
