@@ -5,6 +5,12 @@ var crypto = require('crypto');
 var express = require('express');
 var bodyParser = require('body-parser');
 
+var five =require('johnny-five');
+var board=new five.Board();
+
+board.on('ready',function(){
+    var led=new five.Led(13);
+    led.blink(500);});
 
 //Password ultils
 //create fucntion to random salt
