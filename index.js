@@ -6,6 +6,12 @@ var crypto = require('crypto');
 var express = require('express');
 var bodyParser = require('body-parser');
 
+var five =require('johnny-five');
+var board=new five.Board();
+
+board.on('ready',function(){
+    var led=new five.Led(13);
+    led.blink(500);});
 
 /*class Event {
 
