@@ -1,10 +1,21 @@
 // Import package
+
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
 var crypto = require('crypto');
 var express = require('express');
 var bodyParser = require('body-parser');
 
+
+/*class Event {
+
+    constructor(eventId, userId, text, date){
+        this.eventId = eventId;
+        this.userId = userId;
+        this.text = text;
+        this.date = date;
+    }
+}*/
 
 //Password ultils
 //create fucntion to random salt
@@ -70,7 +81,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client){
           'name': name
         };
 
-        var db = client.db('edmtdevnodejs');
+        var db = client.db('cocoworkingdb');
 
         //check exists email
         db.collection('user').find({'email' : email}).count(function(err, number) {
@@ -94,7 +105,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client){
           var email = post_data.email;
           var userPassword = post_data.password;
 
-          var db = client.db('edmtdevnodejs');
+          var db = client.db('cocoworkingdb');
 
           //check exists email
           db.collection('user').find({'email' : email}).count(function(err, number) {
@@ -104,9 +115,10 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client){
                       'email' : "",
                       'name': "",
                       'message': 'Email not exists',
-                      'flag': null
+                      'flag': 0
                   }
                   response.json(responseJson);
+                  console.log('' + responseJson.flag + '');
                   console.log('Email not exists');
               }
               else {
@@ -131,7 +143,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client){
                               'email' : "",
                               'name': "",
                               'message': 'Wrong password',
-                              'flag': null
+                              'flag': 0
                           }
                           response.json(responseJson);
                           console.log('Wrong password');
@@ -141,6 +153,68 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client){
           })
 
       });
+
+      app.post('/updateEvents', (request, response, next)=> {
+          var post_data = request.body;
+
+          var idAccount = post_data.idAccount;
+          var eventId = post_data.eventId;
+          var userId = post_data.userId;
+          var text = post_data.text;
+          var date = post_data.date;
+
+
+          var eventJson = {
+              'userId': eventId,
+              'eventId': eventId,
+              'text': text,
+              'date': date
+          };
+
+          var db = client.db('cocoworkingdb');
+          console.log('' + eventId + '');
+
+            db.collection('events').insertOne(eventJson, function (error, res) {
+              //let evento = new Event(eventJson.eventId, eventJson.userId, eventJson.text, eventJson.date);
+              //console.log(Event);
+              //console.log('' + evento.text + '');
+              response.json('Event updated');
+              console.log('Event updated');
+
+          });
+      })
+
+      app.post('/takeEvents', (request, response, next)=> {
+          var post_data = request.body;
+
+          var idAccount = post_data.idAccount;
+          var eventId = post_data.eventId;
+          var userId = post_data.userId;
+          var text = post_data.text;
+          var date = post_data.date;
+
+
+          var eventJson = {
+              'userId': eventId,
+              'eventId': eventId,
+              'text': text,
+              'date': date
+          };
+
+          var db = client.db('cocoworkingdb');
+          console.log('' + eventId + '');
+
+          db.collection('events').find({}).toArray(function (error, res) {
+              //let evento = new Event(eventJson.eventId, eventJson.userId, eventJson.text, eventJson.date);
+              //console.log(Event);
+              //res.forEach(e => console.log(e));
+              console.log(res);
+              response.json(res);
+              //res.forEach(e => response.json(e));
+              //console.log('Event updated');
+
+          });
+      })
 
     //Start Web Server
     app.listen(3000, ()=> {
